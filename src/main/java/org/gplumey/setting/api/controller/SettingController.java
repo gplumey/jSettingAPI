@@ -53,12 +53,16 @@ public class SettingController {
 		switch (settingJSON.getType()) {
 		case Integer:
 			setting = new IntegerSetting(settingJSON.getValue());
+			break;
 		case String:
 			setting = new StringSetting(settingJSON.getValue());
+			break;
 		case Date:
 			setting = new DateSetting(settingJSON.getValue());
+			break;
 		case Boolean:
 			setting = new BooleanSetting(settingJSON.getValue());
+			break;
 		default:
 			break;
 
