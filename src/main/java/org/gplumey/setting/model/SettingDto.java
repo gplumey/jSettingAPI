@@ -1,6 +1,6 @@
 package org.gplumey.setting.model;
 
-public class SettingJSON {
+public class SettingDto {
 	private SettingType type;
 	private String value;
 
