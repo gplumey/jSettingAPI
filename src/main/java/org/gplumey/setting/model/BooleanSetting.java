@@ -6,10 +6,10 @@ public class BooleanSetting extends Setting<Boolean> {
 		super(SettingType.Boolean);
 	}
 
-	public BooleanSetting(String value) {
+	public BooleanSetting(Object value) {
 		this();
 		if (value != null) {
-			setValue(Boolean.parseBoolean(value));
+			// setValue(Boolean.parseBoolean(value));
 		}
 	}
 

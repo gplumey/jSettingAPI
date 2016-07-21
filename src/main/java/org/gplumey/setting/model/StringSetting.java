@@ -6,10 +6,10 @@ public class StringSetting extends Setting<Integer> {
 		super(SettingType.Integer);
 	}
 
-	public StringSetting(String value) {
+	public StringSetting(Object value) {
 		this();
 		if (value != null) {
-			setValue(Integer.parseInt(value));
+			// setValue(Integer.parseInt(value));
 		}
 	}
 

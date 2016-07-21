@@ -1,6 +1,8 @@
 package org.gplumey.setting.api.controller;
 
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,8 +32,28 @@ public class SettingController {
 	Function<Setting<?>, SettingDto> toDto = new Function<Setting<?>, SettingDto>() {
 
 		@Override
-		public SettingDto apply(Setting<?> t) {
+		public SettingDto apply(Setting<?> setting) {
+			if (setting == null) {
+				return null;
+			}
 			SettingDto dto = new SettingDto();
+			dto.setType(setting.getType());
+			if (setting.getValue() != null) {
+				switch (setting.getType()) {
+				case Integer:
+				case String:
+				case Boolean:
+					dto.setValue(setting.getValue());
+					break;
+				case Date:
+					dto.setValue(setting.getValue().toString());
+					break;
+				default:
+					break;
+
+				}
+
+			}
 			return dto;
 		}
 	};
@@ -45,11 +67,27 @@ public class SettingController {
 		return folder;
 	}
 
+	@RequestMapping(value = "/settings", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public List<SettingDto> list() {
+		List<Setting<?>> settings = repository.findAll();
+		if (settings != null) {
+			return settings.stream().map(toDto).collect(Collectors.toList());
+		} else {
+			return null;
+		}
+	}
+
+	@RequestMapping(value = "/settings", method = RequestMethod.DELETE, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public void clear() {
+		repository.deleteAll();
+	}
+
 	@RequestMapping(value = "/settings/**/{name}", method = RequestMethod.GET, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
-	public Setting<?> get(HttpServletRequest request, @PathVariable("name") String name) {
+	public SettingDto get(HttpServletRequest request, @PathVariable("name") String name) {
 		Setting<?> setting = repository.findOne(new SettingId(getFolder(request, name), name));
-		return setting;
+		SettingDto dto = toDto.apply(setting);
+		return dto;
 	}
 
 	@RequestMapping(value = "/settings/**/{name}", method = RequestMethod.POST, produces = {
@@ -67,7 +105,7 @@ public class SettingController {
 			setting = new StringSetting(settingJSON.getValue());
 			break;
 		case Date:
-			setting = new DateSetting(settingJSON.getValue());
+			setting = new DateSetting((String) settingJSON.getValue());
 			break;
 		case Boolean:
 			setting = new BooleanSetting(settingJSON.getValue());
