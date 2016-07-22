@@ -1,4 +1,6 @@
-package org.gplumey.setting.model;
+package org.gplumey.setting.dto;
+
+import org.gplumey.setting.model.SettingType;
 
 public class SettingDto {
 	private SettingType type;
