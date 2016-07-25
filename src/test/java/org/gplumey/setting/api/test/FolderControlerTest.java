@@ -1,5 +1,6 @@
 package org.gplumey.setting.api.test;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -48,7 +49,13 @@ public class FolderControlerTest {
 
 		ResultActions then = mockMvc.perform(MockMvcRequestBuilders.get("/folders").accept(MediaType.APPLICATION_JSON));
 
-		then.andExpect(MockMvcResultMatchers.status().isOk()).andExpect(jsonPath("$.name", is("TEST_FOLDER")));
+		then.andExpect(MockMvcResultMatchers.status().isOk())
+				//
+				.andExpect(jsonPath("$", hasSize(1)))
+				//
+				.andExpect(jsonPath("$[0].name").isNotEmpty())
+				//
+				.andExpect(jsonPath("$[0].name", is("TEST_FOLDER")));
 
 	}
 
