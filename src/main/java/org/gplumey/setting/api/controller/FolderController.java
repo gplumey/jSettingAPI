@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.gplumey.setting.dto.FolderDto;
 import org.gplumey.setting.dto.FolderDtoMapper;
+import org.gplumey.setting.model.Folder;
 import org.gplumey.setting.model.dao.FolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -47,6 +48,13 @@ public class FolderController {
 			MediaType.APPLICATION_JSON_VALUE })
 	public void create(HttpServletRequest request, @RequestBody FolderDto dto, @PathVariable("name") String name) {
 
+	}
+
+	@RequestMapping(value = "/folders/**/{name}", method = RequestMethod.GET, produces = {
+			MediaType.APPLICATION_JSON_VALUE })
+	public Folder get(HttpServletRequest request, @RequestBody @PathVariable("name") String name) {
+		String folder = getFolder(request, name);
+		return folderRepository.findOne(folder + "/" + name);
 	}
 
 }

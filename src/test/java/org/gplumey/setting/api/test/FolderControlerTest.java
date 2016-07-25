@@ -35,12 +35,18 @@ public class FolderControlerTest {
 	private FolderRepository folderRepository;
 
 	@Before
-	public void setUp() {
+	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(ctx).build();
 		folderRepository.deleteAll();
 
+		Folder parent = new Folder();
+		parent.setId("PARENT_FOLDER");
+		parent.setName("PARENT_FOLDER");
 		Folder folder = new Folder();
+		folder.setParent(parent);
+		folder.setId("PARENT_FOLDER/TEST_FOLDER");
 		folder.setName("TEST_FOLDER");
+		folderRepository.save(parent);
 		folderRepository.save(folder);
 	}
 
@@ -51,11 +57,18 @@ public class FolderControlerTest {
 
 		then.andExpect(MockMvcResultMatchers.status().isOk())
 				//
-				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$", hasSize(2)));
+
+		ResultActions then2 = mockMvc.perform(
+				MockMvcRequestBuilders.get("/folders/PARENT_FOLDER/TEST_FOLDER").accept(MediaType.APPLICATION_JSON));
+
+		then2.andExpect(MockMvcResultMatchers.status().isOk())
 				//
-				.andExpect(jsonPath("$[0].name").isNotEmpty())
+				.andExpect(jsonPath("$.name").isNotEmpty())
 				//
-				.andExpect(jsonPath("$[0].name", is("TEST_FOLDER")));
+				.andExpect(jsonPath("$.name", is("TEST_FOLDER")))
+
+				.andExpect(jsonPath("$.parent.name", is("PARENT_FOLDER")));
 
 	}
 

@@ -10,6 +10,9 @@
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 version = '1.0-SNAPSHOT'
 group   = 'org.gplumey'
 
@@ -45,7 +48,31 @@ dependencies {
     testCompile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.2.0'
     testCompile group: 'com.jayway.jsonpath', name: 'json-path-assert', version: '2.2.0'
     
-    compile 'org.gplumey:jI18NLabel:1.0-SNAPSHOT'
+    //compile 'org.gplumey:jI18NLabel:1.0-SNAPSHOT'
 }
 
 //-Dhttp.proxyHost=frboucpxy01.internal.imsglobal.com -Dhttp.proxyPort=8080 -Dhttps.proxyHost=frboucpxy01.internal.imsglobal.com -Dhttps.proxyPort=8080
+apply plugin: 'jacoco'
+
+test {
+    //  include 'src/java-test/**'
+}
+
+
+jacoco {
+    toolVersion = "0.7.7.201606060606"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+jacocoTestReport {
+    group = "reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled true
+        html.enabled true
+        csv.enabled false
+    }
+    //classDirectories = fileTree(dir: 'build/classes/main', include: 'com/thc/**')
+    //sourceDirectories = fileTree(dir: 'scr/java', include: 'com/thc/**')
+    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+}

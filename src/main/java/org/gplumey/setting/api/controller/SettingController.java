@@ -7,8 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.gplumey.setting.dto.SettingDto;
 import org.gplumey.setting.dto.SettingDtoMapper;
+import org.gplumey.setting.model.Folder;
 import org.gplumey.setting.model.Setting;
 import org.gplumey.setting.model.SettingId;
+import org.gplumey.setting.model.dao.FolderRepository;
 import org.gplumey.setting.model.dao.SettingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -24,6 +26,9 @@ import org.springframework.web.servlet.HandlerMapping;
 public class SettingController {
 	@Autowired
 	private SettingRepository repository;
+
+	@Autowired
+	private FolderRepository folderRepository;
 
 	private String getFolder(HttpServletRequest request, String name) {
 		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
@@ -52,7 +57,8 @@ public class SettingController {
 	@RequestMapping(value = "/settings/**/{name}", method = RequestMethod.GET, produces = {
 			MediaType.APPLICATION_JSON_VALUE })
 	public SettingDto get(HttpServletRequest request, @PathVariable("name") String name) {
-		Setting<?> setting = repository.findOne(new SettingId(getFolder(request, name), name));
+		Folder folder = folderRepository.findOne(getFolder(request, name));
+		Setting<?> setting = repository.findOne(new SettingId(folder, name));
 		SettingDto dto = SettingDtoMapper.toDto.apply(setting);
 		return dto;
 	}
@@ -65,7 +71,8 @@ public class SettingController {
 		Setting<?> setting = SettingDtoMapper.fromDto.apply(settingDto);
 
 		if (setting != null) {
-			setting.setId(new SettingId(getFolder(request, name), name));
+			Folder folder = folderRepository.findOne(getFolder(request, name));
+			setting.setId(new SettingId(folder, name));
 			repository.insert(setting);
 		}
 	}

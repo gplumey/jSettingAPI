@@ -1,9 +1,9 @@
 package org.gplumey.setting.model;
 
-public class StringSetting extends Setting<Integer> {
+public class StringSetting extends Setting<String> {
 
 	public StringSetting() {
-		super(SettingType.Integer);
+		super(SettingType.String);
 	}
 
 	public StringSetting(Object value) {
