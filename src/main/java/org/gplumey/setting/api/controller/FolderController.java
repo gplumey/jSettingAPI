@@ -2,10 +2,14 @@ package org.gplumey.setting.api.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.gplumey.setting.dto.FolderDto;
+import org.gplumey.setting.dto.FolderDtoMapper;
+import org.gplumey.setting.model.dao.FolderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +21,9 @@ import org.springframework.web.servlet.HandlerMapping;
 
 @RestController
 public class FolderController {
+
+	@Autowired
+	private FolderRepository folderRepository;
 
 	private String getFolder(HttpServletRequest request, String name) {
 		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
@@ -33,7 +40,7 @@ public class FolderController {
 		FolderDto dto = new FolderDto();
 		dto.setName("FOLDER1");
 		folders.add(dto);
-		return folders;
+		return folderRepository.findAll().stream().map(FolderDtoMapper.toDto).collect(Collectors.toList());
 	}
 
 	@RequestMapping(value = "/folders/**/{name}", method = RequestMethod.POST, produces = {
